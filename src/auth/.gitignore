@@ -1,1 +1,3 @@
-# .giignore
+# .gitignore
+
+client_secrets.json
