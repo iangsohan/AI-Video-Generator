@@ -1,0 +1,1 @@
+Write a 75 word YouTube video description given the video is about ANIMAL_NAME and has the title "TITLE" but don't include the title.
