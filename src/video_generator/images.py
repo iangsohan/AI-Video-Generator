@@ -28,6 +28,7 @@ def retrieve_images(animal, image_count=30, width=1280, height=720):
                 image = resize_within_threshold(image)
                 if image is not None and image not in images:
                     images.append(image)
+
     except Exception:
         # Handle exceptions related to Unsplash API requests
         print("No Unsplash API Requests Remaining...")
@@ -115,4 +116,5 @@ def resize_within_threshold(image, target_width=1280, target_height=720, aspect_
         return resized_image
     else:
         # Return None if the aspect ratio is not within the threshold
+        print("Image could not be resized!")
         return None

@@ -60,6 +60,7 @@ def create_video(animal, audio, images):
         # Apply crossfadeout to all clips except the last one
         if i != len(images) - 1:
             image_clip = image_clip.crossfadeout(1)
+            image_clip.set_duration(duration_per_image + 5)
         image_clips.append(image_clip)
 
     # Concatenate all image clips into a single video

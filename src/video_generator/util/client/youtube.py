@@ -5,10 +5,6 @@ import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
 from googleapiclient.http import MediaIoBaseUpload
-import sys
-import httplib2
-from apiclient.discovery import build
-from oauth2client.file import Storage
 from googleapiclient.http import MediaFileUpload
 from config import GOOGLE_API_KEY
 

@@ -28,6 +28,7 @@ def query_image(animal, width, height):
     
     # Extract the URL of the full-sized image from the Unsplash API response
     image_url = data["urls"]["full"]
+    print(image_url)
     
     # Open the image from the URL using PIL
     image = Image.open(io.BytesIO(requests.get(image_url).content))
