@@ -1,6 +1,7 @@
 # images.py
 
 import requests
+import json
 import torch
 from video_generator.util.client.unsplash import query_image
 from torchvision import models, transforms
@@ -53,9 +54,12 @@ def classify_image(image, expected_animal):
     Returns:
     - bool: True if the image is classified as the expected animal, False otherwise.
     """
-    # Load the ResNet50 model and set it to evaluation mode
-    model = models.resnet50(pretrained=True)
+    # weights=ResNet50_Weights.DEFAULT
+    model = models.resnet152(pretrained=True)
     model.eval()
+    # https://storage.googleapis.com/openimages/v6/oidv6-class-descriptions.csv
+    f = open("video_generator/assets/labels/labels.json")
+    labels = json.load(f)
 
     # Define image preprocessing transformations
     preprocess = transforms.Compose([
@@ -72,10 +76,6 @@ def classify_image(image, expected_animal):
     # Make a forward pass through the model
     with torch.no_grad():
         output = model(img_tensor)
-
-    # Fetch the labels for the model's predictions
-    labels_url = "https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json"
-    labels = requests.get(labels_url).json()
 
     # Retrieve the predicted label for the image
     _, predicted_idx = torch.max(output, 1)

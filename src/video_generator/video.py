@@ -1,7 +1,7 @@
 # video.py
 
 import numpy as np
-from moviepy.editor import AudioFileClip, ImageClip, concatenate_videoclips
+from moviepy.editor import AudioFileClip, ImageClip, VideoFileClip, concatenate_videoclips
 from video_generator.util.metadata import get_title, get_description
 from video_generator.util.thumbnail import curate_thumbnail
 from video_generator.util.client.youtube import upload_video, insert_captions
@@ -53,19 +53,26 @@ def create_video(animal, audio, images):
         # Create an ImageClip from the image array and set its duration
         image_clip = ImageClip(np.array(image)).set_duration(duration_per_image)
 
-        # Apply crossfadein to all clips except the first one
-        if i != 0:
-            image_clip = image_clip.crossfadein(1)
+        # Apply crossfadein to all clips
+        image_clip = image_clip.crossfadein(1)
 
         # Apply crossfadeout to all clips except the last one
         if i != len(images) - 1:
             image_clip = image_clip.crossfadeout(1)
+        if i == len(images) - 1:
             image_clip.set_duration(duration_per_image + 5)
+        else:
+            image_clip = image_clip.set_duration(duration_per_image)
         image_clips.append(image_clip)
+
+    # Intro
+    intro_clip = VideoFileClip("video_generator/assets/media/intro.mp4")
+    intro_clip = intro_clip.fadeout(1)
 
     # Concatenate all image clips into a single video
     video = concatenate_videoclips(image_clips, method="compose")
     video = video.set_audio(audio_clip)
+    video = concatenate_videoclips([intro_clip, video], method="compose")
 
     # Return the generated video
     print("Successfully created video!")

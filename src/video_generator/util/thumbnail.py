@@ -175,7 +175,7 @@ def add_logo_to_thumbnail(thumbnail):
     - PIL.Image: The thumbnail with added logo.
     """
     # Load the logo image with an alpha channel
-    png = Image.open("video_generator/assets/images/logo.png").convert("RGBA")
+    png = Image.open("video_generator/assets/media/logo.png").convert("RGBA")
     
     # Resize the logo to a fixed size
     png = png.resize((150, 150))
