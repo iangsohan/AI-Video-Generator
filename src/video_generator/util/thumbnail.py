@@ -154,14 +154,40 @@ def add_text_to_thumbnail(animal, thumbnail):
     - PIL.Image: The thumbnail with added text.
     """
     # Initialize the drawing context and font for text
+    text = animal.upper()
     draw = ImageDraw.Draw(thumbnail)
-    font = ImageFont.truetype("video_generator/assets/fonts/font.ttf", size=150)
+    font = get_sized_font(text, draw)
     
     # Add text in black and white for a shadow effect
-    draw.text((40, 25), animal.upper(), font=font, fill=(0, 0, 0))
-    draw.text((30, 15), animal.upper(), font=font, fill=(255, 255, 255))
+    draw.text((40, 25), text, font=font, fill=(0, 0, 0))
+    draw.text((30, 15), text, font=font, fill=(255, 255, 255))
     
     return thumbnail
+
+
+def get_sized_font(text, draw, max_size=150, max_length=850):
+    """
+    Get the appropriate font size for the given text to fit within the specified width.
+
+    Args:
+        text (str): The text to be drawn.
+        draw: An ImageDraw object.
+        max_size (int, optional): The maximum font size to start with. Defaults to 150.
+        max_length (int, optional): The maximum allowed text width. Defaults to 800.
+
+    Returns:
+        ImageFont: The appropriate font object.
+    """
+    # Initialize font size and text length to values greater than the maximum
+    font_size = max_size + 1
+    text_length = max_length + 1
+    
+    # Loop until the text fits within the specified width or font size becomes 0
+    while text_length > max_length and font_size > 0:
+        font_size -= 1
+        font = ImageFont.truetype("video_generator/assets/fonts/font.ttf", size=font_size)
+        text_length = draw.textlength(text, font=font)
+    return font
 
 
 def add_logo_to_thumbnail(thumbnail):
