@@ -63,7 +63,7 @@ def create_video(animal, audio, images):
 
         # Set end frame
         if i == len(images) - 1:
-            image_clip.set_duration(5)
+            image_clip.set_duration(3)
 
         image_clips.append(image_clip)
 

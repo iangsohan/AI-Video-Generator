@@ -2,4 +2,4 @@ Write a WORD_COUNT-word essay meant to be spoken about ANIMAL_NAME meant to ente
 - Don't include a title.
 - Start with 'Welcome to the wonderful world of animals!'.
 - End with 'Thank you for joining me on this journey. Until our next adventure, keep exploring, keep questioning, and most importantly. Keep learning.'.
-- At the very end, after there is nothing else to say, state "If you liked this video and would like to see more like it, please like and subscribe to Animal Expedition!".
+- At the very end, after there is nothing else to say, state "If you enjoyed this video and want to see more, please support Animal Expedition by liking this video and subcribing to the channel!".
