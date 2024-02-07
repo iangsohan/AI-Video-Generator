@@ -46,7 +46,7 @@ def create_video(animal, audio, images):
     audio_clip = AudioFileClip(audio_file_path)
 
     # Calculate the duration each image should appear in the video
-    duration_per_image = audio.duration_seconds / len(images)
+    duration_per_image = audio.duration_seconds / (len(images) - 1)
 
     image_clips = []
     for i, image in enumerate(images):
@@ -59,10 +59,12 @@ def create_video(animal, audio, images):
         # Apply crossfadeout to all clips except the last one
         if i != len(images) - 1:
             image_clip = image_clip.crossfadeout(1)
+        image_clip = image_clip.set_duration(duration_per_image)
+
+        # Set end frame
         if i == len(images) - 1:
-            image_clip.set_duration(duration_per_image + 5)
-        else:
-            image_clip = image_clip.set_duration(duration_per_image)
+            image_clip.set_duration(5)
+
         image_clips.append(image_clip)
 
     # Intro
