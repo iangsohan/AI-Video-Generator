@@ -4,7 +4,7 @@ import os
 import shutil
 from video_generator.script import generate_script
 from video_generator.audio import generate_audio
-from video_generator.images import retrieve_images
+from video_generator.media import retrieve_images
 from video_generator.video import curate_video
 
 def setup():
