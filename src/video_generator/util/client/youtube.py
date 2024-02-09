@@ -1,37 +1,12 @@
 # youtube.py
 
 import io
-import google_auth_oauthlib.flow
-import googleapiclient.discovery
-import googleapiclient.errors
 from googleapiclient.http import MediaIoBaseUpload
 from googleapiclient.http import MediaFileUpload
-from config import GOOGLE_API_KEY
-
-# Client secrets file for OAuth 2.0 authentication
-CLIENT_SECRETS_FILE = "auth/client_secrets.json"
-
-# OAuth 2.0 scopes for YouTube API
-SCOPES = [
-    "https://www.googleapis.com/auth/youtube.force-ssl",
-    "https://www.googleapis.com/auth/youtube.upload"
-]
-
-# YouTube API service information
-YOUTUBE_API_SERVICE_NAME = "youtube"
-YOUTUBE_API_VERSION = "v3"
-
-# Initialize OAuth 2.0 flow using client secrets file
-flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
-    CLIENT_SECRETS_FILE, SCOPES)
-credentials = flow.run_local_server()
+from auth.authorization import get_authenticated_service
 
 # Build YouTube API client using OAuth 2.0 credentials
-youtube = googleapiclient.discovery.build(
-    YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credentials)
-
-# Build YouTube API client using API key
-youtube_api = googleapiclient.discovery.build("youtube", "v3", developerKey=GOOGLE_API_KEY)
+youtube = get_authenticated_service()
 
 def upload_video(animal, title, description, video):
     """
@@ -145,7 +120,7 @@ def list_video_snippet(video_id):
     - dict: The snippet information for the video.
     """
     # Construct the request for listing video snippet information
-    request = youtube_api.videos().list(
+    request = youtube.videos().list(
         part="snippet",
         id=video_id
     )

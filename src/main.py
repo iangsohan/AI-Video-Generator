@@ -40,9 +40,9 @@ def main():
     animal = setup()
 
     # Generate script, audio, and retrieve images
-    script = generate_script(animal, word_count=1000)
+    script = generate_script(animal, word_count=100)
     audio = generate_audio(script)
-    images = retrieve_images(animal, image_count=30)
+    images = retrieve_images(animal, image_count=5)
 
     # Curate the video using generated script, audio, and images
     curate_video(animal, script, audio, images)
