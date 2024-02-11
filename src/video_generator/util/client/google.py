@@ -4,10 +4,7 @@ import requests
 import html
 from config import GOOGLE_API_KEY
 
-# Supported language codes for translation
-LANGUAGE_CODES = ["es-ES", "hi-IN", "fr-FR", "cmn-CN"]
-
-def translate(script, language):
+def translate(script, language="en-GB"):
     """
     Translate a given script to the specified language using the Google Translation API.
 
@@ -18,6 +15,12 @@ def translate(script, language):
     Returns:
     - str: The translated script.
     """
+    source = "en"
+    target = language.split('-')[0].strip()
+
+    if target == source:
+        return script
+    
     # API endpoint for translation
     url = "https://translation.googleapis.com/language/translate/v2"
     
@@ -25,8 +28,9 @@ def translate(script, language):
     params = {
         "key": GOOGLE_API_KEY,
         "q": script,
-        "source": "en",
-        "target": language.split('-')[0].strip(),
+        "source": source,
+        "target": target,
+        "contentType": "text"
     }
     
     # Make a POST request to the Google Translation API
@@ -47,7 +51,7 @@ def translate(script, language):
     return translation
 
 
-def synthesize_text(text):
+def synthesize_text(text, language="en-GB"):
     """
     Synthesize text into audio using the Google Text-to-Speech API.
 
@@ -63,7 +67,7 @@ def synthesize_text(text):
     # Set data parameters for the synthesis request
     data = {
         "input": {"text": text},
-        "voice": {"languageCode": "en-GB", "name": "en-GB-Wavenet-B"},
+        "voice": {"languageCode": language, "name": f"{language}-Wavenet-B"},
         "audioConfig": {
             "audioEncoding": "LINEAR16",
             "speakingRate": 0.8,

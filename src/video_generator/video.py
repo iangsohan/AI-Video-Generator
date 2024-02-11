@@ -5,6 +5,10 @@ from moviepy.editor import AudioFileClip, ImageClip, VideoFileClip, concatenate_
 from video_generator.util.metadata import get_title, get_description
 from video_generator.util.thumbnail import curate_thumbnail
 from video_generator.util.client.youtube import upload_video, insert_captions
+from video_generator.util.client.google import translate
+
+# Supported language codes for translation
+LANGUAGE_CODES = ["en-GB", "hi-IN", "es-ES", "fr-FR", "cmn-CN"]
 
 def curate_video(animal, script, audio, images):
     """
@@ -24,7 +28,9 @@ def curate_video(animal, script, audio, images):
     
     # Curate the video thumbnail and insert captions
     curate_thumbnail(animal, video_id)
-    insert_captions(video_id, script)
+    for language in LANGUAGE_CODES:
+        translation = translate(script, language)
+        insert_captions(video_id, translation, language)
 
 
 def create_video(animal, audio, images):
@@ -46,25 +52,16 @@ def create_video(animal, audio, images):
     audio_clip = AudioFileClip(audio_file_path)
 
     # Calculate the duration each image should appear in the video
-    duration_per_image = audio.duration_seconds / (len(images) - 1)
+    duration_per_image = audio.duration_seconds / len(images)
 
     image_clips = []
     for i, image in enumerate(images):
         # Create an ImageClip from the image array and set its duration
         image_clip = ImageClip(np.array(image)).set_duration(duration_per_image)
 
-        # Apply crossfadein to all clips
+        # Apply crossfade to all clips
         image_clip = image_clip.crossfadein(1)
-
-        # Apply crossfadeout to all clips except the last one
-        if i != len(images) - 1:
-            image_clip = image_clip.crossfadeout(1)
-        image_clip = image_clip.set_duration(duration_per_image)
-
-        # Set end frame
-        if i == len(images) - 1:
-            image_clip.set_duration(3)
-
+        image_clip = image_clip.crossfadeout(1)
         image_clips.append(image_clip)
 
     # Intro

@@ -56,7 +56,7 @@ def upload_video(animal, title, description, video):
     return video_id
 
 
-def insert_captions(video_id, script):
+def insert_captions(video_id, script, language):
     """
     Insert captions (subtitles) for a video on YouTube.
 
@@ -64,17 +64,19 @@ def insert_captions(video_id, script):
     - video_id (str): The ID of the video on YouTube.
     - script (str): The script content for captions.
     """
+    language = language.split('-')[0].strip()
+
     # Construct the request for inserting captions
     request = youtube.captions().insert(
         part="snippet",
         body={
             "snippet": {
                 "videoId": video_id,
-                "language": "en",
+                "language": language,
                 "name": "Subtitles"
             }
         },
-        media_body=MediaIoBaseUpload(io.BytesIO(script.encode('utf-8')), mimetype='text/plain')
+        media_body=MediaIoBaseUpload(io.BytesIO(script.encode('utf-8')), mimetype='text')
     )
     
     # Execute the request
