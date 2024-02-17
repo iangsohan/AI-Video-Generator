@@ -1,5 +1,6 @@
 # video.py
 
+import tempfile
 import numpy as np
 from moviepy.editor import AudioFileClip, ImageClip, VideoFileClip, concatenate_videoclips
 from video_generator.util.metadata import get_title, get_description
@@ -7,92 +8,40 @@ from video_generator.util.thumbnail import curate_thumbnail
 from video_generator.util.client.youtube import upload_video, insert_captions
 from video_generator.util.client.google import translate
 
-# Supported language codes for translation
 LANGUAGE_CODES = ["en-GB", "hi-IN", "es-ES", "fr-FR", "cmn-CN"]
 
 def curate_video(animal, script, audio, images):
-    """
-    Curate a video by combining audio, images, and uploading to YouTube.
-
-    Args:
-    - animal (str): The name of the animal.
-    - script (str): The script content for captions.
-    - audio (AudioSegment): The audio for the video.
-    - images (list): List of images for the video frames.
-    """
-    # Create the video
-    video = create_video(animal, audio, images)
-    
-    # Upload the video to YouTube
+    video = create_video(audio, images)
     video_id = publish_video(animal, video)
-    
-    # Curate the video thumbnail and insert captions
     curate_thumbnail(animal, video_id)
     for language in LANGUAGE_CODES:
-        translation = translate(script, language)
+        translation = translate(animal, script, language)
         insert_captions(video_id, translation, language)
 
 
-def create_video(animal, audio, images):
-    """
-    Create a video by combining audio and images.
-
-    Args:
-    - animal (str): The name of the animal.
-    - audio (AudioSegment): The audio for the video.
-    - images (list): List of images for the video frames.
-
-    Returns:
-    - VideoClip: The generated video clip.
-    """
-    # TODO: Handle audio without saving to file.
-    # Export audito to MP3 and create AudioFileClip
-    audio_file_path = f"videos/{animal}/audio.mp3"
-    audio.export(audio_file_path, format="wav")
-    audio_clip = AudioFileClip(audio_file_path)
-
-    # Calculate the duration each image should appear in the video
+def create_video(audio, images):
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
+        audio.export(temp_file.name, format="wav")
+        audio_file_path = temp_file.name
+        audio_clip = AudioFileClip(audio_file_path)
     duration_per_image = audio.duration_seconds / len(images)
-
     image_clips = []
-    for i, image in enumerate(images):
-        # Create an ImageClip from the image array and set its duration
+    for image in images:
         image_clip = ImageClip(np.array(image)).set_duration(duration_per_image)
-
-        # Apply crossfade to all clips
         image_clip = image_clip.crossfadein(1)
         image_clip = image_clip.crossfadeout(1)
         image_clips.append(image_clip)
-
-    # Intro
     intro_clip = VideoFileClip("video_generator/assets/media/intro.mp4")
     intro_clip = intro_clip.fadeout(1)
-
-    # Concatenate all image clips into a single video
     video = concatenate_videoclips(image_clips, method="compose")
     video = video.set_audio(audio_clip)
     video = concatenate_videoclips([intro_clip, video], method="compose")
-
-    # Return the generated video
     print("Successfully created video!")
     return video
 
 
 def publish_video(animal, video):
-    """
-    Upload a video to YouTube.
-
-    Args:
-    - animal (str): The name of the animal.
-    - video (VideoClip): The video clip to be uploaded.
-
-    Returns:
-    - str: The video ID on YouTube.
-    """
-    # Get title and description for the video
     title = get_title(animal)
     description = get_description(animal, title)
-    
-    # Upload the video to YouTube and get the video ID
     video_id = upload_video(animal, title, description, video)
     return video_id

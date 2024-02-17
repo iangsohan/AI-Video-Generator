@@ -1,4 +1,5 @@
-Write a WORD_COUNT-word essay meant to be spoken about ANIMAL_NAME meant to entertain but only include the text that is meant to be spoken.
+Write a WORD_COUNT-word essay meant to be spoken about ANIMAL_NAME meant to entertain with a summary of the animal and interesting facts but only include the text that is meant to be spoken.
 - Don't include a title.
+- Don't ask the audience questions, just present facts.
 - Start with 'Welcome to the wonderful world of animals!'.
 - End with 'Thank you for joining me on this journey. If you enjoyed this video and want to see more, please support Animal Expedition by liking this video and subcribing to the channel!".
