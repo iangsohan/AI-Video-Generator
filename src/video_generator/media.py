@@ -1,32 +1,48 @@
 # images.py
 
 from video_generator.util.client.unsplash import query_image
-from video_generator.util.classifier import classify_image_manually
+from video_generator.util.classifier import classify_image
 
-def retrieve_images(animal, image_count=50, width=1280, height=720):
-    images = []
+def retrieve_images(animal, image_count=20, width=1280, height=720):
+    images = []    
     try:
+        # Loop until the desired number of images is retrieved
         while len(images) != image_count:
+            # Query an image related to the animal from Unsplash API
             image, image_url = query_image(animal, width, height)
-            image = resize_within_threshold(image)
-            if classify_image_manually(image_url):
-                if image is not None and image not in images:
-                    images.append(image)
-    except Exception:
-        print("No Unsplash API Requests Remaining...")
+            
+            # Classify the retrieved image
+            if classify_image(image, image_url, animal):
+                # Check if the image can be resized within a certain aspect ratio threshold
+                if resize_within_threshold(image, width, height):
+                    if image not in images:
+                        # Append the resized image to the list of images
+                        images.append(image.resize((width, height)))
+    except Exception as e:
+        # Handle exception when no Unsplash API requests are remaining
+        print(f"No Unsplash API Requests Remaining: {e}")
+    
+    # Convert all images to the RGB color mode
     images = [image.convert('RGB') for image in images]
+    
+    # Return the list of retrieved images
     print(f"Successfully retrieved {len(images)} images!")
     return images
 
 
 def resize_within_threshold(image, target_width=1280, target_height=720, aspect_ratio_threshold=0.4):
+    # Get the original width and height of the image
     original_width, original_height = image.size
+    
+    # Calculate the original aspect ratio of the image
     original_aspect_ratio = original_width / original_height
-    resized_image = image.resize((target_width, target_height))
-    resized_width, resized_height = resized_image.size
-    resized_aspect_ratio = resized_width / resized_height
+    
+    # Calculate the aspect ratio after resizing to the target dimensions
+    resized_aspect_ratio = target_width / target_height
+    
+    # Check if the difference between original and resized aspect ratios is within the threshold
     if abs(original_aspect_ratio - resized_aspect_ratio) <= aspect_ratio_threshold:
-        return resized_image
+        return True
     else:
         print("Image could not be resized!")
-        return None
+        return False

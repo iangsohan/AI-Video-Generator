@@ -1,2 +1,7 @@
 Write a 75 word YouTube video description given the video is about ANIMAL_NAME and has the title "TITLE" but don't include the title.
 - Do NOT include quotes.
+- Underneath the description, add a blank line and then the following credits blurb.
+
+Music Used:
+Jungle Floor - by Jonny Easton
+Link: https://www.youtube.com/watch?v=FtJ03-g83Yg

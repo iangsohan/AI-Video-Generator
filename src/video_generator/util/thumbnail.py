@@ -8,34 +8,65 @@ from PIL import Image, ImageFont, ImageDraw, ImageEnhance, ImageFilter
 from video_generator.util.client.youtube import set_thumbnail, list_video_snippet
 
 def curate_thumbnail(animal, video_id):
+    # Create the thumbnail
     thumbnail = create_thumbnail(animal, video_id)
+    
+    # Set the curated thumbnail for the video on YouTube
     set_thumbnail(video_id, thumbnail)
 
 
 def create_thumbnail(animal, video_id):
+    # Get the initial thumbnail image
     thumbnail = get_thumbnail(video_id)
+    
+    # Enhance the contrast of the thumbnail
     thumbnail = set_contrast(thumbnail)
+    
+    # Enhance the sharpness of the thumbnail
     thumbnail = set_sharpness(thumbnail)
+    
+    # Add text to the thumbnail
     thumbnail = add_text_to_thumbnail(animal, thumbnail)
+    
+    # Add a logo to the thumbnail
     thumbnail = add_logo_to_thumbnail(thumbnail)
+    
+    # Return the curated thumbnail
     print("Successfully created thumbnail!")
     return thumbnail
 
 
 def get_thumbnail(video_id):
+    # Loop until a thumbnail URL is retrieved
     url = None
     while url is None:
+        # Print a message indicating the attempt to retrieve the thumbnail
         print("Attempting to retrieve thumbnail...")
+        
+        # Retrieve video snippet information including thumbnails
         snippet = list_video_snippet(video_id)
+        
         try:
+            # Extract the URL of the maximum resolution thumbnail if available
             thumbnails = snippet['thumbnails']
             url = thumbnails.get('maxres', {}).get('url')
         except Exception as e:
+            # Handle exceptions if no thumbnail is found
             print(f"No thumbnail found, waiting to retry: {e}")
+        
+        # Pause execution for 30 seconds before retrying
         time.sleep(30)
+    
+    # Send a GET request to retrieve the thumbnail image
     response = requests.get(url)
+    
+    # Create a BytesIO object containing the content of the response
     thumbnail = io.BytesIO(response.content)
+    
+    # Open the thumbnail image using PIL's Image module
     thumbnail = Image.open(thumbnail)
+    
+    # Return the retrieved thumbnail image
     print(f"Successfully retrieved thumbnail: {url}")
     return thumbnail
 
