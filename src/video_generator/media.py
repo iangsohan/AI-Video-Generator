@@ -1,13 +1,13 @@
 # images.py
 
+import time
 from video_generator.util.client.unsplash import query_image
 from video_generator.util.classifier import classify_image
 
 def retrieve_images(animal, image_count=20, width=1280, height=720):
-    images = []    
-    try:
-        # Loop until the desired number of images is retrieved
-        while len(images) != image_count:
+    images = []
+    while len(images) != image_count:
+        try:
             # Query an image related to the animal from Unsplash API
             image, image_url = query_image(animal, width, height)
             
@@ -18,9 +18,12 @@ def retrieve_images(animal, image_count=20, width=1280, height=720):
                     if image not in images:
                         # Append the resized image to the list of images
                         images.append(image.resize((width, height)))
-    except Exception as e:
-        # Handle exception when no Unsplash API requests are remaining
-        print(f"No Unsplash API Requests Remaining: {e}")
+        except Exception as e:
+            # Handle exception when no Unsplash API requests are remaining
+            print(f"No Unsplash API Requests Remaining: {e}")
+
+            # Sleep until more image queries are available
+            time.sleep(1800)
     
     # Convert all images to the RGB color mode
     images = [image.convert('RGB') for image in images]

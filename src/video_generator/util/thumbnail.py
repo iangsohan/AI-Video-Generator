@@ -55,7 +55,8 @@ def get_thumbnail(video_id):
             print(f"No thumbnail found, waiting to retry: {e}")
         
         # Pause execution for 30 seconds before retrying
-        time.sleep(30)
+        if url is None:
+            time.sleep(60)
     
     # Send a GET request to retrieve the thumbnail image
     response = requests.get(url)
