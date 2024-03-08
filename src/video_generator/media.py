@@ -9,21 +9,25 @@ def retrieve_images(animal, image_count=20, width=1280, height=720):
     while len(images) != image_count:
         try:
             # Query an image related to the animal from Unsplash API
-            image, image_url = query_image(animal, width, height)
+            image = query_image(animal, width, height)
             
             # Classify the retrieved image
-            if classify_image(image, image_url, animal):
+            if classify_image(image, animal):
                 # Check if the image can be resized within a certain aspect ratio threshold
                 if resize_within_threshold(image, width, height):
+                    image = image.resize((width, height))
                     if image not in images:
                         # Append the resized image to the list of images
-                        images.append(image.resize((width, height)))
+                        images.append(image)
+                    else:
+                        print("Image already in list")
         except Exception as e:
             # Handle exception when no Unsplash API requests are remaining
             print(f"No Unsplash API Requests Remaining: {e}")
 
             # Sleep until more image queries are available
-            time.sleep(1800)
+            remaining_seconds = 3600 - (time.localtime().tm_min * 60 + time.localtime().tm_sec) + 5
+            time.sleep(remaining_seconds)
     
     # Convert all images to the RGB color mode
     images = [image.convert('RGB') for image in images]

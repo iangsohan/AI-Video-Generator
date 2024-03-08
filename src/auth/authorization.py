@@ -10,9 +10,9 @@ def get_authenticated_service():
         with open('auth/credentials.pickle', 'rb') as token:
             credentials = pickle.load(token)
     if not credentials or not credentials.valid:
-        if credentials and credentials.expired and credentials.refresh_token:
+        try:
             credentials.refresh(Request())
-        else:
+        except:
             flow = InstalledAppFlow.from_client_secrets_file(
                 "auth/client_secrets.json",
                 scopes=[

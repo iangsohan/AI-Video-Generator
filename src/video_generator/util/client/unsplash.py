@@ -21,5 +21,5 @@ def query_image(animal, width, height):
     # Open the image from its URL and convert it to a PIL Image object
     image = Image.open(io.BytesIO(requests.get(image_url).content))
     
-    # Return the PIL Image object and the URL of the image
-    return image, image_url
+    # Return the PIL Image object
+    return image

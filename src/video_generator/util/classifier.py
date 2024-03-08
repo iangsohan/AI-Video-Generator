@@ -5,18 +5,13 @@ import webbrowser
 import torch
 from torchvision import models, transforms
 
-def classify_image(image, image_url, expected_animal):
+def classify_image(image, expected_animal):
     # Open the labels JSON file and load the labels
     with open("video_generator/assets/labels/labels.json") as f:
         labels = json.load(f)
     
     # Check if the expected animal is present in the loaded labels
-    if expected_animal in labels:
-        # Use automatic image classification
-        return auto_image_classifier(image, labels, expected_animal)
-    else:
-        # Use manual image classification
-        return manual_image_classifier(image_url)
+    return auto_image_classifier(image, labels, expected_animal)
 
 
 def auto_image_classifier(image, labels, expected_animal):
@@ -55,14 +50,3 @@ def auto_image_classifier(image, labels, expected_animal):
         # Print a message if the image classification identifies an incorrect value
         print(f"Image classification identified an incorrect value: {predicted_label}")
         return False
-
-
-def manual_image_classifier(image_url):
-    # Open the image URL in a web browser
-    webbrowser.open(image_url)
-    
-    # Prompt the user for a decision
-    decision = input("Do you want to continue with this image? (y/n): ")
-    
-    # Return True if the user wants to continue with the image, otherwise return False
-    return decision.upper() == "Y"

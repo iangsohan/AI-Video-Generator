@@ -21,11 +21,15 @@ def upload_video(animal, title, description, video):
             "snippet": {
                 "title": title,
                 "description": description,
-                "tags": ["animals", "safari", animal, "expedition", "yt:cc=on"],
+                "tags": [
+                    animal, "animals",
+                    "safari", "expedition",
+                    "wildlife", "nature",
+                    "yt:cc=on"],
                 "categoryId": 15
             },
             "status": {
-                "privacyStatus": "public",
+                "privacyStatus": "private",
                 "madeForKids": False
             }
         },
@@ -57,7 +61,7 @@ def insert_captions(video_id, script, language):
             "snippet": {
                 "videoId": video_id,
                 "language": language,
-                "name": "Subtitles"
+                "name": "Subtitle"
             }
         },
         media_body=MediaIoBaseUpload(io.BytesIO(script.encode('utf-8')), mimetype='text/plain')
