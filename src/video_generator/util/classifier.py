@@ -1,7 +1,6 @@
 # classifier.py
 
 import json
-import webbrowser
 import torch
 from torchvision import models, transforms
 
